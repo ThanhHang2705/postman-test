@@ -23,11 +23,11 @@ jobs:
         run: npm install -g newman newman-reporter-html
 
       - name: Run Newman tests
-        run: |
-          newman run collection.json --reporters html --reporter-html-export newman-report.html
         env:
           POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
           TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
+        run: |
+          newman run collection.json --reporters html --reporter-html-export newman-report.html --env-var "POSTMAN_API_KEY=$POSTMAN_API_KEY" --env-var "TRELLO_TOKEN=$TRELLO_TOKEN"
 
       - name: Upload Newman report as artifact
         uses: actions/upload-artifact@v3
