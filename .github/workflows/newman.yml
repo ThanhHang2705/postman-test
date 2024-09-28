@@ -1,0 +1,36 @@
+name: Newman test
+
+on:
+  push:
+    branches:
+      - main
+    pull_request:
+
+jobs:
+  newman-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install -g newman newman-reporter-html
+
+      - name: Run Newman tests
+        run: |
+          newman run collection.json --reporters html --reporter-html-export newman-report.html
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          TRELLO_TOKEN: ${{ secrets.TRELLO_TOKEN }}
+
+      - name: Upload Newman report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: newman-report
+          path: newman-report.html
